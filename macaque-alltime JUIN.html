@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macaque — All Time</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #060d18;
+    --bg2: #0b1524;
+    --card: #0e1d30;
+    --card2: #0a1628;
+    --orange: #f97316;
+    --orange2: #fb923c;
+    --green: #00e5a0;
+    --green2: #00c98a;
+    --red: #f43f5e;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --border: rgba(249,115,22,0.2);
+    --border-green: rgba(0,229,160,0.2);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── LIGHTNING BG ── */
+  .hero {
+    position: relative;
+    text-align: center;
+    padding: 48px 20px 36px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #04080f 0%, #060d18 100%);
+  }
+  .hero::before, .hero::after {
+    content: '';
+    position: absolute;
+    top: 0; width: 220px; height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .hero::before {
+    left: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 500'%3E%3Cpolyline points='80,0 50,150 90,150 30,500' stroke='%23f97316' stroke-width='2.5' fill='none' opacity='0.7'/%3E%3Cpolyline points='120,0 100,120 130,120 70,400' stroke='%23fb923c' stroke-width='1.5' fill='none' opacity='0.4'/%3E%3C/svg%3E");
+  }
+  .hero::after {
+    right: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 500'%3E%3Cpolyline points='120,0 150,150 110,150 170,500' stroke='%23a78bfa' stroke-width='2.5' fill='none' opacity='0.7'/%3E%3Cpolyline points='80,0 100,120 70,120 130,400' stroke='%2360a5fa' stroke-width='1.5' fill='none' opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* ── LOGO ── */
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .logo-sphere {
+    width: 56px; height: 56px;
+  }
+  .logo-text { text-align: left; }
+  .logo-text .la { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; color: var(--orange); letter-spacing: 2px; }
+  .logo-text .sphere {
+    font-family: 'Outfit', sans-serif;
+    font-size: 28px; font-weight: 900; letter-spacing: 1px;
+    background: linear-gradient(90deg, #f97316 0%, #a78bfa 50%, #60a5fa 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+  .logo-text .communaute { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 400; letter-spacing: 4px; color: var(--muted); }
+
+  .hero-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: 4px;
+    color: var(--orange);
+    text-transform: uppercase;
+    margin-top: 20px; margin-bottom: 4px;
+  }
+  .hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(40px, 8vw, 64px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+  }
+  .hero-sub {
+    font-size: 13px; color: var(--muted); margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  /* ── MAIN WRAP ── */
+  .container { max-width: 780px; margin: 0 auto; padding: 0 16px 60px; }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 28px 0 20px;
+  }
+  @media (min-width: 600px) {
+    .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  .kpi-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px 14px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent, var(--orange));
+  }
+  .kpi-card.green { --accent: var(--green); border-color: var(--border-green); }
+  .kpi-card.blue  { --accent: var(--blue); border-color: rgba(96,165,250,0.2); }
+  .kpi-card.purple{ --accent: var(--purple); border-color: rgba(167,139,250,0.2); }
+
+  .kpi-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px; font-size: 14px;
+  }
+  .kpi-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 4px;
+  }
+  .kpi-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 22px; font-weight: 800;
+    color: var(--accent, var(--orange));
+    line-height: 1;
+  }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  /* ── CHART SECTION ── */
+  .section {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 22px 18px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px;
+  }
+  .section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--text);
+  }
+  .section-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--green);
+    background: rgba(0,229,160,0.1);
+    border: 1px solid rgba(0,229,160,0.25);
+    border-radius: 20px; padding: 4px 10px;
+  }
+
+  .chart-wrap { position: relative; height: 220px; }
+
+  /* ── TWO COL ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── PAR MOIS ── */
+  .month-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .month-row:last-child { border-bottom: none; }
+  .month-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .month-name { font-size: 13px; font-weight: 600; flex: 1; }
+  .month-detail { font-size: 11px; color: var(--muted); flex: 1; }
+  .month-bar-wrap { flex: 2; height: 5px; background: rgba(255,255,255,0.07); border-radius: 3px; }
+  .month-bar { height: 100%; border-radius: 3px; }
+  .month-pnl { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 600; min-width: 72px; text-align: right; }
+  .month-roi { font-size: 11px; color: var(--muted); min-width: 50px; text-align: right; }
+
+  /* ── DONUT ── */
+  .donut-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto; }
+  .donut-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center;
+  }
+  .donut-pct {
+    font-family: 'Outfit', sans-serif;
+    font-size: 26px; font-weight: 800; color: var(--green);
+    line-height: 1;
+  }
+  .donut-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+  .win-lose {
+    display: flex; justify-content: center; gap: 16px; margin-top: 14px;
+  }
+  .wl-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+  .wl-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── JOURNAL TABLE ── */
+  .journal-wrap { overflow-x: auto; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th {
+    padding: 10px 8px; text-align: left;
+    font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+    color: var(--muted); text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.15s;
+  }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody td { padding: 10px 8px; }
+
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .pill-long  { background: rgba(0,229,160,0.15); color: var(--green); border: 1px solid rgba(0,229,160,0.3); }
+  .pill-short { background: rgba(244,63,94,0.15); color: var(--red); border: 1px solid rgba(244,63,94,0.3); }
+  .pill-tp    { background: rgba(0,229,160,0.12); color: var(--green); }
+  .pill-sl    { background: rgba(244,63,94,0.12); color: var(--red); }
+  .pill-be    { background: rgba(100,116,139,0.2); color: var(--muted); }
+
+  .roi-pos { color: var(--green); font-family: 'DM Mono', monospace; font-weight: 600; }
+  .roi-neg { color: var(--red); font-family: 'DM Mono', monospace; font-weight: 600; }
+
+  .tg-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 6px;
+    background: rgba(96,165,250,0.15); border: 1px solid rgba(96,165,250,0.3);
+    color: var(--blue); text-decoration: none; font-size: 12px;
+    transition: background 0.15s;
+  }
+  .tg-btn:hover { background: rgba(96,165,250,0.3); }
+
+  .asset-badge {
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+    color: var(--orange);
+  }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    margin-top: 28px;
+    background: rgba(249,115,22,0.06);
+    border: 1px solid rgba(249,115,22,0.3);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .disclaimer-icon { font-size: 28px; flex-shrink: 0; }
+  .disclaimer p {
+    font-size: 13px; color: #cbd5e1; line-height: 1.6;
+  }
+  .disclaimer em { color: var(--orange); font-style: normal; font-weight: 600; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center; padding: 32px 20px; color: var(--muted); font-size: 13px;
+  }
+  .empty-state span { font-size: 28px; display: block; margin-bottom: 8px; opacity: 0.4; }
+
+  /* month colors palette */
+  .m1  { background: #f97316; } /* jan */
+  .m2  { background: #fb923c; } /* fev */
+  .m3  { background: #a78bfa; } /* mar */
+  .m4  { background: #60a5fa; } /* avr */
+  .m5  { background: #00e5a0; } /* mai */
+  .m6  { background: #f43f5e; } /* jun */
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="logo-wrap">
+    <svg class="logo-sphere" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="28" r="26" stroke="url(#sg)" stroke-width="1.5"/>
+      <ellipse cx="28" cy="28" rx="14" ry="26" stroke="url(#sg2)" stroke-width="1.2"/>
+      <ellipse cx="28" cy="28" rx="26" ry="10" stroke="url(#sg3)" stroke-width="1.2"/>
+      <circle cx="28" cy="28" r="3" fill="#f97316"/>
+      <line x1="2" y1="28" x2="54" y2="28" stroke="rgba(249,115,22,0.3)" stroke-width="1"/>
+      <line x1="28" y1="2" x2="28" y2="54" stroke="rgba(249,115,22,0.3)" stroke-width="1"/>
+      <defs>
+        <linearGradient id="sg" x1="0" y1="0" x2="56" y2="56">
+          <stop offset="0%" stop-color="#f97316"/>
+          <stop offset="50%" stop-color="#a78bfa"/>
+          <stop offset="100%" stop-color="#60a5fa"/>
+        </linearGradient>
+        <linearGradient id="sg2" x1="0" y1="0" x2="0" y2="56">
+          <stop offset="0%" stop-color="#f97316" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.6"/>
+        </linearGradient>
+        <linearGradient id="sg3" x1="0" y1="0" x2="56" y2="0">
+          <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.6"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="logo-text">
+      <div class="la">LA</div>
+      <div class="sphere">SPHÈRE</div>
+      <div class="communaute">COMMUNAUTÉ</div>
+    </div>
+  </div>
+
+  <div class="hero-label">La Sphère &bull; Trading</div>
+  <div class="hero-title">Macaque All Time</div>
+  <div class="hero-sub">Depuis le 12 janvier 2026 &nbsp;•&nbsp; Historique complet</div>
+</div>
+
+<!-- ══ CONTENT ══ -->
+<div class="container">
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card green">
+      <div class="kpi-icon">📈</div>
+      <div class="kpi-label">Capital actuel</div>
+      <div class="kpi-value" id="kpi-capital">— €</div>
+      <div class="kpi-sub">Départ : 1 000 €/mois</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-label">Gain cumulé</div>
+      <div class="kpi-value" id="kpi-gain">— €</div>
+      <div class="kpi-sub" id="kpi-gain-sub">—</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-icon">🎯</div>
+      <div class="kpi-label">ROI moyen</div>
+      <div class="kpi-value" id="kpi-roi">—%</div>
+      <div class="kpi-sub">All-time</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-icon">📊</div>
+      <div class="kpi-label">Trades</div>
+      <div class="kpi-value" id="kpi-trades">0</div>
+      <div class="kpi-sub" id="kpi-trades-sub">0 TP &bull; 0 SL &bull; 0 BE</div>
+    </div>
+  </div>
+
+  <!-- COURBE CAPITAL -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Courbe de capital — All Time</div>
+      <div class="section-badge" id="chart-badge">1 000 € → — €</div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="capitalChart"></canvas>
+    </div>
+  </div>
+
+  <!-- PAR MOIS + DONUT -->
+  <div class="two-col">
+    <!-- Par mois -->
+    <div class="section" style="margin-bottom:0">
+      <div class="section-header" style="margin-bottom:14px">
+        <div class="section-title">Par mois</div>
+      </div>
+      <div id="months-list">
+        <div class="empty-state"><span>📅</span>Aucun mois enregistré</div>
+      </div>
+    </div>
+
+    <!-- Réussite -->
+    <div class="section" style="margin-bottom:0">
+      <div class="section-header" style="margin-bottom:14px">
+        <div class="section-title">Réussite</div>
+      </div>
+      <div class="donut-wrap">
+        <canvas id="donutChart" width="140" height="140"></canvas>
+        <div class="donut-center">
+          <div class="donut-pct" id="winrate-pct">—%</div>
+          <div class="donut-label">RÉUSSITE</div>
+        </div>
+      </div>
+      <div class="win-lose">
+        <div class="wl-item"><div class="wl-dot" style="background:var(--green)"></div><span id="tp-count">0</span> ✅</div>
+        <div class="wl-item" style="color:var(--muted)">•</div>
+        <div class="wl-item"><div class="wl-dot" style="background:var(--red)"></div><span id="sl-count">0</span> ❌</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOURNAL -->
+  <div class="section" style="margin-top:16px">
+    <div class="section-header">
+      <div class="section-title">Journal des trades</div>
+      <div class="section-badge" id="journal-badge">0 entrées</div>
+    </div>
+    <div class="journal-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Actif</th>
+            <th>Dir.</th>
+            <th>Lev.</th>
+            <th>Résultat</th>
+            <th>PnL €</th>
+            <th>Capital</th>
+            <th>🔗</th>
+          </tr>
+        </thead>
+        <tbody id="journal-body">
+          <tr>
+            <td colspan="8">
+              <div class="empty-state"><span>📋</span>Aucun trade enregistré — utilise les commandes ci-dessous</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <div class="disclaimer-icon">⚠️</div>
+    <p>Les performances passées ne reflètent pas les possibles performances futures et <em>ne garantissent en aucun cas</em> des résultats similaires.</p>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ══════════════════════════════════════════
+   DATA STORE
+══════════════════════════════════════════ */
+const TRADES = [
+  { id:1, date:"2026-01-12", asset:"ETH", direction:"SHORT", result:"TP", roi:1.51, tp_num:1, leverage:30, bk_before:1000, tg:"https://t.me/LaSpherexyz/15" },
+  { id:2, date:"2026-01-13", asset:"XRP", direction:"SHORT", result:"SL", roi:2.87, tp_num:1, leverage:10, bk_before:1009.06, tg:"https://t.me/LaSpherexyz/20" },
+  { id:3, date:"2026-01-17", asset:"ETH", direction:"SHORT", result:"SL", roi:1.38, tp_num:1, leverage:30, bk_before:1003.27, tg:"https://t.me/LaSpherexyz/33" },
+  { id:4, date:"2026-01-17", asset:"BTC", direction:"SHORT", result:"TP", roi:1.28, tp_num:1, leverage:30, trade_id:"btc-0117", bk_before:994.96, tg:"https://t.me/LaSpherexyz/34" },
+  { id:5, date:"2026-01-17", asset:"BTC", direction:"SHORT", result:"TP", roi:4.14, tp_num:2, leverage:30, trade_id:"btc-0117", bk_before:1002.6, tg:"https://t.me/LaSpherexyz/34" },
+  { id:6, date:"2026-01-17", asset:"BTC", direction:"SHORT", result:"TP", roi:6.18, tp_num:3, leverage:30, trade_id:"btc-0117", bk_before:1027.51, tg:"https://t.me/LaSpherexyz/34" },
+  { id:7, date:"2026-01-19", asset:"SUI", direction:"LONG", result:"SL", roi:9.84, tp_num:1, leverage:10, bk_before:1065.61, tg:"https://t.me/LaSpherexyz/48" },
+  { id:8, date:"2026-01-19", asset:"AAVE", direction:"LONG", result:"SL", roi:10.28, tp_num:1, leverage:10, bk_before:1044.64, tg:"https://t.me/LaSpherexyz/49" },
+  { id:9, date:"2026-01-19", asset:"SOL", direction:"LONG", result:"SL", roi:9.44, tp_num:1, leverage:10, bk_before:1023.16, tg:"https://t.me/LaSpherexyz/52" },
+  { id:10, date:"2026-01-20", asset:"BTC", direction:"LONG", result:"SL", roi:5.66, tp_num:1, leverage:30, bk_before:1003.84, tg:"https://t.me/LaSpherexyz/55" },
+  { id:11, date:"2026-01-21", asset:"ETH", direction:"LONG", result:"SL", roi:7.4, tp_num:1, leverage:30, bk_before:969.75, tg:"https://t.me/LaSpherexyz/66" },
+  { id:12, date:"2026-01-27", asset:"VET", direction:"LONG", result:"SL", roi:7.03, tp_num:1, leverage:10, bk_before:926.69, tg:"https://t.me/LaSpherexyz/93" },
+  { id:13, date:"2026-02-03", asset:"BTC", direction:"LONG", result:"SL", roi:9.31, tp_num:1, leverage:30, bk_before:913.66, tg:"https://t.me/LaSpherexyz/131" },
+  { id:14, date:"2026-02-03", asset:"ETH", direction:"LONG", result:"SL", roi:12.41, tp_num:1, leverage:30, bk_before:862.63, tg:"https://t.me/LaSpherexyz/137" },
+  { id:15, date:"2026-02-09", asset:"ETH", direction:"LONG", result:"TP", roi:4.75, tp_num:1, leverage:30, bk_before:798.4, tg:"https://t.me/LaSpherexyz/164" },
+  { id:16, date:"2026-02-10", asset:"TAO", direction:"LONG", result:"TP", roi:17, tp_num:1, leverage:10, trade_id:"tao-0210", bk_before:821.15, tg:"https://t.me/LaSpherexyz/173" },
+  { id:17, date:"2026-02-10", asset:"TAO", direction:"LONG", result:"TP", roi:28, tp_num:2, leverage:10, trade_id:"tao-0210", bk_before:849.07, tg:"https://t.me/LaSpherexyz/173" },
+  { id:18, date:"2026-02-10", asset:"TAO", direction:"LONG", result:"TP", roi:35, tp_num:3, leverage:10, trade_id:"tao-0210", bk_before:896.62, tg:"https://t.me/LaSpherexyz/173" },
+  { id:19, date:"2026-02-14", asset:"TIA", direction:"LONG", result:"TP", roi:6, tp_num:1, leverage:10, bk_before:959.38, tg:"https://t.me/LaSpherexyz/194" },
+  { id:20, date:"2026-02-15", asset:"BTC", direction:"LONG", result:"SL", roi:7.77, tp_num:1, leverage:30, bk_before:970.89, tg:"https://t.me/LaSpherexyz/211" },
+  { id:21, date:"2026-02-15", asset:"HYPE", direction:"LONG", result:"TP", roi:15, tp_num:1, leverage:10, trade_id:"hype-0215", bk_before:925.63, tg:"https://t.me/LaSpherexyz/220" },
+  { id:22, date:"2026-02-15", asset:"HYPE", direction:"LONG", result:"TP", roi:27, tp_num:2, leverage:10, trade_id:"hype-0215", bk_before:953.4, tg:"https://t.me/LaSpherexyz/220" },
+  { id:23, date:"2026-02-15", asset:"HYPE", direction:"LONG", result:"TP", roi:40.73, tp_num:3, leverage:10, trade_id:"hype-0215", bk_before:1004.88, tg:"https://t.me/LaSpherexyz/220" },
+  { id:24, date:"2026-02-15", asset:"AAVE", direction:"LONG", result:"SL", roi:19.69, tp_num:1, leverage:10, bk_before:1086.74, tg:"https://t.me/LaSpherexyz/223" },
+  { id:25, date:"2026-02-16", asset:"NEAR", direction:"LONG", result:"TP", roi:6, tp_num:1, leverage:10, trade_id:"near-0216", bk_before:1043.94, tg:"https://t.me/LaSpherexyz/225" },
+  { id:26, date:"2026-02-16", asset:"NEAR", direction:"LONG", result:"TP", roi:11.5, tp_num:2, leverage:10, trade_id:"near-0216", bk_before:1056.47, tg:"https://t.me/LaSpherexyz/225" },
+  { id:27, date:"2026-02-16", asset:"NEAR", direction:"LONG", result:"TP", roi:17, tp_num:3, leverage:10, trade_id:"near-0216", bk_before:1080.77, tg:"https://t.me/LaSpherexyz/225" },
+  { id:28, date:"2026-02-16", asset:"NEAR", direction:"LONG", result:"TP", roi:22.09, tp_num:4, leverage:10, trade_id:"near-0216", bk_before:1117.52, tg:"https://t.me/LaSpherexyz/225" },
+  { id:29, date:"2026-02-25", asset:"BTC", direction:"LONG", result:"TP", roi:2.1, tp_num:1, leverage:30, trade_id:"btc-0225", bk_before:1166.89, tg:"https://t.me/LaSpherexyz/270" },
+  { id:30, date:"2026-02-25", asset:"BTC", direction:"LONG", result:"TP", roi:3.4, tp_num:2, leverage:30, trade_id:"btc-0225", bk_before:1181.59, tg:"https://t.me/LaSpherexyz/270" },
+  { id:31, date:"2026-02-25", asset:"BTC", direction:"LONG", result:"TP", roi:6.31, tp_num:3, leverage:30, trade_id:"btc-0225", bk_before:1205.7, tg:"https://t.me/LaSpherexyz/270" },
+  { id:32, date:"2026-02-25", asset:"SOL", direction:"LONG", result:"TP", roi:5.8, tp_num:1, leverage:10, bk_before:1251.34, tg:"https://t.me/LaSpherexyz/274" },
+  { id:33, date:"2026-02-25", asset:"BNB", direction:"LONG", result:"TP", roi:2.5, tp_num:1, leverage:10, bk_before:1265.86, tg:"https://t.me/LaSpherexyz/276" },
+  { id:34, date:"2026-02-26", asset:"ETH", direction:"LONG", result:"TP", roi:7.39, tp_num:1, leverage:30, bk_before:1272.19, tg:"https://t.me/LaSpherexyz/302" },
+  { id:35, date:"2026-02-26", asset:"SOL", direction:"LONG", result:"TP", roi:9.07, tp_num:1, leverage:10, bk_before:1328.6, tg:"https://t.me/LaSpherexyz/302" },
+  { id:36, date:"2026-02-26", asset:"AAVE", direction:"LONG", result:"SL", roi:13.75, tp_num:1, leverage:10, bk_before:1352.7, tg:"https://t.me/LaSpherexyz/302" },
+  { id:37, date:"2026-02-26", asset:"HYPE", direction:"LONG", result:"TP", roi:15, tp_num:1, leverage:10, trade_id:"hype-0226", bk_before:1315.5, tg:"https://t.me/LaSpherexyz/302" },
+  { id:38, date:"2026-02-26", asset:"HYPE", direction:"LONG", result:"TP", roi:27, tp_num:2, leverage:10, trade_id:"hype-0226", bk_before:1354.96, tg:"https://t.me/LaSpherexyz/302" },
+  { id:39, date:"2026-02-26", asset:"HYPE", direction:"LONG", result:"TP", roi:40.74, tp_num:3, leverage:10, trade_id:"hype-0226", bk_before:1428.13, tg:"https://t.me/LaSpherexyz/302" },
+  { id:40, date:"2026-02-26", asset:"BNB", direction:"LONG", result:"TP", roi:4.5, tp_num:1, leverage:10, trade_id:"bnb-0226", bk_before:1544.5, tg:"https://t.me/LaSpherexyz/302" },
+  { id:41, date:"2026-02-26", asset:"BNB", direction:"LONG", result:"TP", roi:8.66, tp_num:2, leverage:10, trade_id:"bnb-0226", bk_before:1558.4, tg:"https://t.me/LaSpherexyz/302" },
+  { id:42, date:"2026-02-26", asset:"BNB", direction:"LONG", result:"TP", roi:11.42, tp_num:3, leverage:10, trade_id:"bnb-0226", bk_before:1585.39, tg:"https://t.me/LaSpherexyz/302" },
+  { id:43, date:"2026-02-26", asset:"BTC", direction:"LONG", result:"TP", roi:3.1, tp_num:1, leverage:30, trade_id:"btc-0226", bk_before:1621.6, tg:"https://t.me/LaSpherexyz/302" },
+  { id:44, date:"2026-02-26", asset:"BTC", direction:"LONG", result:"TP", roi:4.5, tp_num:2, leverage:30, trade_id:"btc-0226", bk_before:1651.76, tg:"https://t.me/LaSpherexyz/302" },
+  { id:45, date:"2026-02-26", asset:"BTC", direction:"LONG", result:"TP", roi:6.31, tp_num:3, leverage:30, trade_id:"btc-0226", bk_before:1696.36, tg:"https://t.me/LaSpherexyz/302" },
+  { id:46, date:"2026-03-04", asset:"ADA", direction:"LONG", result:"SL", roi:13.64, tp_num:1, leverage:10, bk_before:1760.58, tg:"https://t.me/LaSpherexyz/338" },
+  { id:47, date:"2026-03-20", asset:"BTC", direction:"LONG", result:"TP", roi:1.46, tp_num:1, leverage:30, bk_before:1712.55, tg:"https://t.me/LaSpherexyz/436" },
+  { id:48, date:"2026-03-22", asset:"ETH", direction:"LONG", result:"TP", roi:2.4, tp_num:1, leverage:30, bk_before:1727.55, tg:"https://t.me/LaSpherexyz/442" },
+  { id:49, date:"2026-03-26", asset:"ETH", direction:"LONG", result:"TP", roi:4.58, tp_num:1, leverage:30, trade_id:"eth-0326", bk_before:1752.43, tg:"https://t.me/LaSpherexyz/469" },
+  { id:50, date:"2026-03-26", asset:"ETH", direction:"LONG", result:"TP", roi:8.1, tp_num:2, leverage:30, trade_id:"eth-0326", bk_before:1800.59, tg:"https://t.me/LaSpherexyz/469" },
+  { id:51, date:"2026-03-26", asset:"ETH", direction:"LONG", result:"TP", roi:11.54, tp_num:3, leverage:30, trade_id:"eth-0326", bk_before:1888.1, tg:"https://t.me/LaSpherexyz/469" },
+  { id:52, date:"2026-03-26", asset:"ETH", direction:"LONG", result:"TP", roi:16.64, tp_num:4, leverage:30, trade_id:"eth-0326", bk_before:2018.83, tg:"https://t.me/LaSpherexyz/469" },
+  { id:53, date:"2026-03-26", asset:"ETH", direction:"LONG", result:"TP", roi:19.9, tp_num:5, leverage:30, trade_id:"eth-0326", bk_before:2220.39, tg:"https://t.me/LaSpherexyz/469" },
+  { id:54, date:"2026-03-26", asset:"BTC", direction:"LONG", result:"TP", roi:4.65, tp_num:1, leverage:30, trade_id:"btc-0326", bk_before:2317.16, tg:"https://t.me/LaSpherexyz/470" },
+  { id:55, date:"2026-03-26", asset:"BTC", direction:"LONG", result:"TP", roi:7, tp_num:2, leverage:30, trade_id:"btc-0326", bk_before:2381.81, tg:"https://t.me/LaSpherexyz/549" },
+  { id:56, date:"2026-03-26", asset:"BTC", direction:"LONG", result:"TP", roi:9.77, tp_num:3, leverage:30, trade_id:"btc-0326", bk_before:2479.13, tg:"https://t.me/LaSpherexyz/566" },
+  { id:57, date:"2026-03-26", asset:"BTC", direction:"LONG", result:"TP", roi:11.82, tp_num:4, leverage:30, trade_id:"btc-0326", bk_before:2614.96, tg:"https://t.me/LaSpherexyz/590" },
+  { id:58, date:"2026-03-26", asset:"BTC", direction:"LONG", result:"TP", roi:14.4, tp_num:5, leverage:30, trade_id:"btc-0326", bk_before:2779.29, tg:"https://t.me/LaSpherexyz/614" },
+  { id:59, date:"2026-04-19", asset:"SOL", direction:"LONG", result:"TP", roi:5.95, tp_num:1, leverage:10, trade_id:"sol-0419", bk_before:2979.49, tg:"https://t.me/LaSpherexyz/703" },
+  { id:60, date:"2026-04-19", asset:"SOL", direction:"LONG", result:"TP", roi:14.5, tp_num:2, leverage:10, trade_id:"sol-0419", bk_before:3014.95, tg:"https://t.me/LaSpherexyz/703" },
+  { id:61, date:"2026-05-04", asset:"ETH", direction:"SHORT", result:"TP", roi:3, tp_num:1, leverage:30, trade_id:"eth-0504", bk_before:3101.35, tg:"https://t.me/LaSpherexyz/696" },
+  { id:62, date:"2026-05-04", asset:"ETH", direction:"SHORT", result:"TP", roi:6.4, tp_num:2, leverage:30, trade_id:"eth-0504", bk_before:3157.18, tg:"https://t.me/LaSpherexyz/737" },
+  { id:63, date:"2026-05-04", asset:"ETH", direction:"SHORT", result:"TP", roi:8.5, tp_num:3, leverage:30, trade_id:"eth-0504", bk_before:3276.27, tg:"https://t.me/LaSpherexyz/757" },
+  { id:64, date:"2026-05-04", asset:"ETH", direction:"SHORT", result:"TP", roi:10.6, tp_num:4, leverage:30, trade_id:"eth-0504", bk_before:3434.44, tg:"https://t.me/LaSpherexyz/757" },
+  { id:65, date:"2026-05-17", asset:"BTC", direction:"SHORT", result:"TP", roi:3.4, tp_num:1, leverage:30, trade_id:"btc-0517", bk_before:3631.69, tg:"https://t.me/LaSpherexyz/758" },
+  { id:66, date:"2026-05-17", asset:"BTC", direction:"SHORT", result:"TP", roi:6.5, tp_num:2, leverage:30, trade_id:"btc-0517", bk_before:3705.77, tg:"https://t.me/LaSpherexyz/767" },
+  { id:67, date:"2026-05-17", asset:"BTC", direction:"SHORT", result:"TP", roi:7.98, tp_num:3, leverage:30, trade_id:"btc-0517", bk_before:3847.41, tg:"https://t.me/LaSpherexyz/800" },
+  { id:68, date:"2026-05-04", asset:"BTC", direction:"SHORT", result:"TP", roi:9.47, tp_num:4, leverage:30, trade_id:"btc-0517", bk_before:4021.29, tg:"https://t.me/LaSpherexyz/829" },
+  { id:69, date:"2026-05-26", asset:"BTC", direction:"SHORT", result:"TP", roi:1.12, tp_num:1, leverage:30, trade_id:"btc-0526", bk_before:4227.65, tg:"https://t.me/LaSpherexyz/829" },
+  { id:70, date:"2026-05-26", asset:"BTC", direction:"SHORT", result:"TP", roi:2.94, tp_num:2, leverage:30, trade_id:"btc-0526", bk_before:4256.06, tg:"https://t.me/LaSpherexyz/829" },
+  { id:71, date:"2026-05-26", asset:"BTC", direction:"SHORT", result:"TP", roi:4.5, tp_num:3, leverage:30, trade_id:"btc-0526", bk_before:4330.63, tg:"https://t.me/LaSpherexyz/829" },
+  { id:72, date:"2026-06-01", asset:"BTC", direction:"SHORT", result:"TP", roi:6.06, tp_num:4, leverage:30, trade_id:"btc-0526", bk_before:4444.78, tg:"https://t.me/LaSpherexyz/842" },
+  { id:73, date:"2026-06-01", asset:"BTC", direction:"SHORT", result:"TP", roi:7.09, tp_num:5, leverage:30, trade_id:"btc-0526", bk_before:4598.49, tg:"https://t.me/LaSpherexyz/843" },
+];
+
+/* Mois de référence (capital de départ 1000€ chaque mois) */
+const MONTHS = [
+  { key:"2026-01", label:"Janvier 2026", colorClass:"m1" },
+  { key:"2026-02", label:"Février 2026", colorClass:"m3" },
+  { key:"2026-03", label:"Mars 2026", colorClass:"m4" },
+  { key:"2026-04", label:"Avril 2026", colorClass:"m5" },
+  { key:"2026-05", label:"Mai 2026", colorClass:"m6" },
+  { key:"2026-06", label:"Juin 2026", colorClass:"m2" },
+];
+
+/* ══════════════════════════════════════════
+   COMPUTED STATS
+══════════════════════════════════════════ */
+/* ── MONEY MANAGEMENT ──
+   Position = 10% du BK
+   Par TP : 20% de la position = 2% du BK (max 5 TP)
+   SL : perte de la portion restante (positions encore ouvertes)
+   BE : 0€
+*/
+/* ── MONEY MANAGEMENT ──
+   Position totale = 10% du BK d'entrée
+   Chaque TP = 20% de la position = 2% du BK d'entrée
+   SL sans TP préalable = perte sur 100% de la position (roi × lev sur 10% du BK)
+   SL après TP1+ = BE automatique (SL déplacé au point d'entrée) = 0€
+   BE = 0€
+*/
+function getExposurePerSlice(entryBk) {
+  // 1 TP = 20% de la position = 2% du BK d'entrée
+  return entryBk * 0.10 * 0.20;
+}
+
+function getFullExposure(entryBk) {
+  // Position totale = 10% du BK d'entrée (pour SL sans TP)
+  return entryBk * 0.10;
+}
+
+function calcPnl(sliceExpo, result, roi, leverage, tpNumInTrade) {
+  // sliceExpo = 2% du BK d'entrée (1 part sur 5)
+  // SL direct (pas de TP avant) = -100% de la position = -10% du BK = -5 parts
+  // SL après TP1+ = BE = 0€ (SL déplacé au point d'entrée)
+  // TP = gain sur 1 part (2% du BK) × ROI% × levier
+  if (result === 'BE') return 0;
+  const lev = parseFloat(leverage) || 1;
+  if (result === 'SL') {
+    if (tpNumInTrade === 1) return -(sliceExpo * 5); // -100% position = -10% BK, sans levier ni ROI
+    return 0; // SL après TP1+ = BE
+  }
+  return sliceExpo * (roi / 100) * lev;
+}
+
+function buildTradeExposures() {
+  // Pour chaque trade_id, fige l'expo sur le BK au moment du PREMIER TP/SL/BE
+  const sorted = [...TRADES].sort((a,b) => a.date.localeCompare(b.date) || (a.tp_num||1) - (b.tp_num||1));
+  const entryBK = {}; // trade_id -> bk au moment de l'entrée
+  let bk = 1000;
+  sorted.forEach(t => {
+    const tid = t.trade_id || t.id;
+    if (!(tid in entryBK)) entryBK[tid] = bk; // premier TP = entrée
+    const expo = getExposure(entryBK[tid]);
+    const pnl = calcPnl(expo, t.result, t.roi, t.leverage || 1);
+    bk += pnl;
+  });
+  return entryBK;
+}
+
+function computeStats() {
+  let tp = 0, sl = 0, be = 0;
+  let bk = 1000;
+  const entryBK = {};
+
+  const tpCountPerTrade = {}; // track how many TPs taken per trade before this event
+  const sorted = [...TRADES].sort((a,b) => a.date.localeCompare(b.date) || (a.tp_num||1) - (b.tp_num||1));
+  sorted.forEach(t => {
+    const tid = t.trade_id || t.id;
+    if (!(tid in entryBK)) entryBK[tid] = bk;
+    if (!(tid in tpCountPerTrade)) tpCountPerTrade[tid] = 0;
+    const sliceExpo = getExposurePerSlice(entryBK[tid]);
+    const tpNumInTrade = tpCountPerTrade[tid] + 1; // position in sequence for this trade
+    const pnl = calcPnl(sliceExpo, t.result, t.roi, t.leverage || 1, tpNumInTrade);
+    if (t.result === 'TP') { tp++; tpCountPerTrade[tid]++; }
+    else if (t.result === 'SL') sl++;
+    else be++;
+    bk += pnl;
+    t._bk_after = Math.round(bk * 100) / 100;
+  });
+
+  const totalGain = bk - 1000;
+  const totalTrades = tp + sl + be;
+  const winrate = totalTrades > 0 ? Math.round(tp / totalTrades * 100) : 0;
+  const roiAllTime = Math.round((totalGain / 1000) * 10000) / 100;
+
+  return { tp, sl, be, totalTrades, winrate, totalGain, bkFinal: Math.round(bk * 100) / 100, roiAllTime };
+}
+
+function computeCapitalCurve() {
+  const firstMonth = MONTHS.length > 0 ? MONTHS[0].key : '2026-01';
+  const points = [{ label: '12/01', value: 1000, monthKey: firstMonth }];
+  let bk = 1000;
+  const entryBK = {};
+  const sorted = [...TRADES].sort((a,b) => a.date.localeCompare(b.date) || (a.tp_num||1) - (b.tp_num||1));
+  const tpCountCurve = {};
+  sorted.forEach(t => {
+    const tid = t.trade_id || t.id;
+    if (!(tid in entryBK)) entryBK[tid] = bk;
+    if (!(tid in tpCountCurve)) tpCountCurve[tid] = 0;
+    const sliceExpo = getExposurePerSlice(entryBK[tid]);
+    const tpNumInTrade = tpCountCurve[tid] + 1;
+    const pnl = calcPnl(sliceExpo, t.result, t.roi, t.leverage || 1, tpNumInTrade);
+    if (t.result === 'TP') tpCountCurve[tid]++;
+    bk += pnl;
+    t.bk_after = Math.round(bk * 100) / 100;
+    points.push({ label: t.date.slice(5), value: Math.round(bk * 100) / 100, monthKey: t.date.slice(0,7) });
+  });
+  return points;
+}
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+let capitalChartInst = null;
+let donutChartInst = null;
+
+function render() {
+  const stats = computeStats();
+  const curve = computeCapitalCurve();
+
+  // KPI — all-time cumulatif
+  const lastBK = stats.bkFinal;
+
+  document.getElementById('kpi-capital').textContent = lastBK.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+  document.getElementById('kpi-gain').textContent = (stats.totalGain >= 0 ? '+' : '') + stats.totalGain.toFixed(2) + ' €';
+  document.getElementById('kpi-gain-sub').textContent = (stats.totalGain >= 0 ? '+' : '') + stats.totalGain.toFixed(2) + ' € depuis jan 2026';
+  document.getElementById('kpi-trades').textContent = stats.totalTrades;
+  document.getElementById('kpi-trades-sub').textContent = stats.tp + ' TP • ' + stats.sl + ' SL • ' + stats.be + ' BE';
+  document.getElementById('kpi-roi').textContent = (stats.roiAllTime >= 0 ? '+' : '') + stats.roiAllTime.toFixed(2) + '%';
+  document.getElementById('chart-badge').textContent = '1 000 € → ' + lastBK.toFixed(2) + ' €';
+
+  // Winrate
+  document.getElementById('winrate-pct').textContent = stats.winrate + '%';
+  document.getElementById('tp-count').textContent = stats.tp;
+  document.getElementById('sl-count').textContent = stats.sl;
+
+  // CAPITAL CHART — un dataset par mois, couleur différente
+  if (capitalChartInst) capitalChartInst.destroy();
+  const ctx = document.getElementById('capitalChart').getContext('2d');
+
+  const MONTH_COLORS = {
+    'm1':'#f97316','m2':'#fb923c','m3':'#a78bfa',
+    'm4':'#60a5fa','m5':'#00e5a0','m6':'#f43f5e'
+  };
+
+  const allLabels = curve.map(p => p.label);
+  const chartDatasets = [];
+
+  MONTHS.forEach((m, mi) => {
+    const color = MONTH_COLORS[m.colorClass] || '#f97316';
+    // Points de ce mois + point de jonction avec mois précédent
+    const fullData = allLabels.map((_, i) => {
+      const p = curve[i];
+      if (!p) return null;
+      if (p.monthKey === m.key) return p.value;
+      // point de jonction : dernier point du mois précédent
+      if (mi > 0 && p.monthKey === MONTHS[mi-1].key) {
+        const nextP = curve[i+1];
+        if (nextP && nextP.monthKey === m.key) return p.value;
+      }
+      return null;
+    });
+    chartDatasets.push({
+      data: fullData,
+      borderColor: color,
+      borderWidth: 2.5,
+      backgroundColor: 'transparent',
+      fill: false,
+      tension: 0.35,
+      pointBackgroundColor: color,
+      pointRadius: curve.length < 30 ? 4 : 2,
+      pointHoverRadius: 6,
+      spanGaps: false,
+    });
+  });
+
+  // Fallback si pas de mois définis
+  if (chartDatasets.length === 0) {
+    const grad = ctx.createLinearGradient(0,0,0,220);
+    grad.addColorStop(0,'rgba(249,115,22,0.35)');
+    grad.addColorStop(1,'rgba(249,115,22,0.00)');
+    chartDatasets.push({
+      data: curve.map(p => p.value),
+      borderColor: '#f97316', borderWidth: 2.5,
+      backgroundColor: grad, fill: true, tension: 0.35,
+      pointBackgroundColor: '#f97316',
+      pointRadius: 4, pointHoverRadius: 6,
+    });
+  }
+
+  capitalChartInst = new Chart(ctx, {
+    type: 'line',
+    data: { labels: allLabels.length > 0 ? allLabels : ['Départ'], datasets: chartDatasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          mode: 'index', intersect: false,
+          callbacks: {
+            label: c => c.raw !== null ? ' ' + c.raw.toFixed(2) + ' €' : null,
+            filter: i => i.raw !== null,
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { size:10 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { size:10 }, callback: v => v+'€' } }
+      }
+    }
+  });
+
+  // DONUT
+  if (donutChartInst) donutChartInst.destroy();
+  const dCtx = document.getElementById('donutChart').getContext('2d');
+  donutChartInst = new Chart(dCtx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: stats.totalTrades > 0 ? [stats.tp, stats.sl + stats.be] : [1, 0],
+        backgroundColor: ['#00e5a0', stats.totalTrades > 0 ? '#f43f5e' : '#1e293b'],
+        borderWidth: 0,
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      cutout: '72%',
+      plugins: { legend: { display: false }, tooltip: { enabled: false } }
+    }
+  });
+
+  // MONTHS LIST
+  renderMonths();
+
+  // JOURNAL
+  renderJournal();
+}
+
+function computeMonthlyROIs() {
+  let bk = 1000;
+  const entryBK = {};
+  return MONTHS.map(m => {
+    const bkStart = bk;
+    const monthTrades = [...TRADES].filter(t => t.date.startsWith(m.key)).sort((a,b) => a.date.localeCompare(b.date) || (a.tp_num||1) - (b.tp_num||1));
+    const tpCountMonth = {};
+    monthTrades.forEach(t => {
+      const tid = t.trade_id || t.id;
+      if (!(tid in entryBK)) entryBK[tid] = bk;
+      if (!(tid in tpCountMonth)) tpCountMonth[tid] = 0;
+      const sliceExpo = getExposurePerSlice(entryBK[tid]);
+      const tpNumInTrade = tpCountMonth[tid] + 1;
+      const pnl = calcPnl(sliceExpo, t.result, t.roi, t.leverage || 1, tpNumInTrade);
+      if (t.result === 'TP') tpCountMonth[tid]++;
+      bk += pnl;
+    });
+    const pnl = bk - bkStart;
+    return { pnl: Math.round(pnl * 100) / 100, roi: Math.round((pnl / bkStart) * 10000) / 100 };
+  });
+}
+
+function renderMonths() {
+  const el = document.getElementById('months-list');
+  if (MONTHS.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span>📅</span>Aucun mois enregistré</div>';
+    return;
+  }
+  const monthROIs = computeMonthlyROIs();
+
+  el.innerHTML = MONTHS.map((m, i) => {
+    const { pnl, roi } = monthROIs[i];
+    const maxVal = Math.max(...monthROIs.map(r => Math.abs(r.pnl)), 1);
+    const barW = Math.round(Math.abs(pnl) / maxVal * 100);
+    const color = pnl >= 0 ? '#00e5a0' : '#f43f5e';
+    const monthTrades = TRADES.filter(t => t.date.startsWith(m.key));
+    const mTp = monthTrades.filter(t => t.result === 'TP').length;
+    return `
+      <div class="month-row">
+        <div class="month-dot ${m.colorClass}"></div>
+        <div class="month-name">${m.label}</div>
+        <div class="month-bar-wrap"><div class="month-bar" style="width:${barW}%;background:${color}"></div></div>
+        <div class="month-pnl" style="color:${color}">${pnl>=0?'+':''}${pnl.toFixed(2)} €</div>
+        <div class="month-roi">${roi>=0?'+':''}${roi.toFixed(2)}%</div>
+      </div>`;
+  }).join('');
+}
+
+function renderJournal() {
+  const tbody = document.getElementById('journal-body');
+  document.getElementById('journal-badge').textContent = TRADES.length + ' entrée' + (TRADES.length > 1 ? 's' : '');
+
+  if (TRADES.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><span>📋</span>Aucun trade enregistré</div></td></tr>';
+    return;
+  }
+
+  // Build entryBK map for journal display
+  const journalEntryBK = {};
+  [...TRADES].sort((a,b) => a.date.localeCompare(b.date) || (a.tp_num||1)-(b.tp_num||1)).forEach(t => {
+    const tid = t.trade_id || t.id;
+    if (!(tid in journalEntryBK)) journalEntryBK[tid] = t.bk_before;
+  });
+
+  tbody.innerHTML = TRADES.map(t => {
+    const tid = t.trade_id || t.id;
+    const entryBk = journalEntryBK[tid] || t.bk_before;
+    const sliceExpo = getExposurePerSlice(entryBk);
+    // Count TPs before this entry for SL logic
+    const tpsBefore = TRADES.filter(x => (x.trade_id||x.id) === tid && x.result === 'TP' && (x.tp_num||1) < (t.tp_num||1)).length;
+    const tpNumInTrade = tpsBefore + 1;
+    const pnl = calcPnl(sliceExpo, t.result, t.roi, t.leverage || 1, tpNumInTrade);
+    const bkAfter = t.bk_before + pnl;
+    const pnlClass = pnl >= 0 ? 'roi-pos' : 'roi-neg';
+    const dirPill = t.direction === 'LONG'
+      ? '<span class="pill pill-long">LONG</span>'
+      : '<span class="pill pill-short">SHORT</span>';
+    const tpLabel = t.result === 'TP' ? 'TP' + (t.tp_num || '') : t.result;
+    let resPill = '';
+    if (t.result === 'TP') resPill = `<span class="pill pill-tp">${tpLabel}</span>`;
+    else if (t.result === 'SL') resPill = '<span class="pill pill-sl">SL</span>';
+    else resPill = '<span class="pill pill-be">BE</span>';
+
+    const levLabel = `×${t.leverage || 1}`;
+    const pnlDisplay = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + ' €';
+
+    return `<tr>
+      <td style="color:var(--muted);white-space:nowrap">${t.date}</td>
+      <td><span class="asset-badge">${t.asset}</span></td>
+      <td>${dirPill}</td>
+      <td style="color:var(--muted);font-size:11px;font-family:'DM Mono',monospace">${levLabel}</td>
+      <td>${resPill}</td>
+      <td class="${pnlClass}">${pnlDisplay}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${bkAfter.toFixed(0)} €</td>
+      <td><a href="${t.tg || '#'}" target="_blank" class="tg-btn">✈</a></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   COMMANDES D'ENTRÉE (console + URL param)
+   Format : addTrade("2026-01-10","SOL","LONG","TP",12.5,"#")
+            addMonth("2026-01","Janvier 2026","m1")
+══════════════════════════════════════════ */
+function addMonth(key, label, colorClass) {
+  if (MONTHS.find(m => m.key === key)) return console.warn('Mois déjà existant:', key);
+  MONTHS.push({ key, label, colorClass });
+  MONTHS.sort((a,b) => a.key.localeCompare(b.key));
+  render();
+  console.log('✅ Mois ajouté:', label);
+}
+
+function addTrade(date, asset, direction, result, roi, tp_num, leverage, tg = '#') {
+  // BK cumulatif all-time
+  const sorted = [...TRADES].sort((a,b) => a.date.localeCompare(b.date));
+  let bk = 1000;
+  sorted.filter(t => t.date <= date).forEach(t => {
+    const exp = getExposure(bk);
+    const pnl = calcPnl(exp, t.result, t.roi, t.leverage || 1);
+    bk += pnl;
+  });
+
+  const id = TRADES.length + 1;
+  TRADES.push({
+    id, date, asset,
+    direction: direction.toUpperCase(),
+    result: result.toUpperCase(),
+    roi: parseFloat(roi),
+    tp_num: parseInt(tp_num) || 1,
+    leverage: parseFloat(leverage) || 1,
+    bk_before: Math.round(bk * 100) / 100,
+    tg
+  });
+  TRADES.sort((a,b) => a.date.localeCompare(b.date));
+  render();
+  console.log(`✅ ${asset} ${direction} TP${tp_num} ${result} ×${leverage} | ROI brut: ${roi}% | ROI eff: ${(roi*leverage).toFixed(2)}% | BK: ${bk.toFixed(2)}€`);
+}
+
+function clearAll() {
+  TRADES.length = 0;
+  MONTHS.length = 0;
+  render();
+  console.log('🗑️ Données effacées');
+}
+
+/* Initial render */
+render();
+
+/* Log des commandes disponibles */
+console.log('%c📊 MACAQUE ALL-TIME — Commandes disponibles', 'color:#f97316;font-weight:bold;font-size:14px');
+console.log('%caddMonth("2026-01", "Janvier 2026", "m1")', 'color:#00e5a0');
+console.log('%caddTrade("2026-01-15", "SOL", "LONG", "TP", 12.5, "#lien_tg")', 'color:#60a5fa');
+console.log('%caddTrade("2026-01-20", "BTC", "SHORT", "SL", 0, "#")  // SL: roi ignoré', 'color:#f43f5e');
+console.log('%cclearAll()  // efface tout', 'color:#64748b');
+</script>
+</body>
+</html>
